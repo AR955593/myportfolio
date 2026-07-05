@@ -219,19 +219,19 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                       runSpacing: 10,
                       children: [
                         _StatPill(
-                          label: '120+',
+                          label: '150+',
                           sub: 'DSA Solved',
                           icon: Icons.code,
                           color: const Color(0xFF00FFCC),
                         ),
                         _StatPill(
-                          label: '3+',
+                          label: '4+',
                           sub: 'Projects',
                           icon: Icons.rocket_launch,
                           color: const Color(0xFFBB86FC),
                         ),
                         _StatPill(
-                          label: '5★',
+                          label: '3★',
                           sub: 'HackerRank',
                           icon: Icons.star,
                           color: const Color(0xFFFFD700),

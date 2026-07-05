@@ -167,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final apkPath = Platform.isWindows
         ? r'C:\Users\ankit\Videos\Flutter\MY protfolio\portfolio_app\build\app\outputs\flutter-apk\app-release.apk'
-        : '/storage/emulated/0/Download/portfolio_app-release.apk';
+        : '/storage/emulated/0/Download/portfolio_app.apk';
 
     final file = File(apkPath);
     if (!file.existsSync()) {
