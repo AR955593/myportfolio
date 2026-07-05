@@ -143,12 +143,21 @@ class _MainScreenState extends State<MainScreen> {
     final messenger = ScaffoldMessenger.of(context);
 
     if (kIsWeb) {
-      final uri = Uri.parse('${Uri.base.origin}/app-release.apk');
+      // NOTE: Replace this with your Google Drive / Firebase / GitHub Release direct link
+      const String apkDownloadUrl = 'YOUR_APK_DOWNLOAD_LINK';
+
+      final Uri uri;
+      if (apkDownloadUrl != 'YOUR_APK_DOWNLOAD_LINK' && apkDownloadUrl.isNotEmpty) {
+        uri = Uri.parse(apkDownloadUrl);
+      } else {
+        uri = Uri.parse('${Uri.base.origin}/app-release.apk');
+      }
+
       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         messenger.showSnackBar(
           const SnackBar(
             content: Text(
-              'APK download link is not available. Place app-release.apk in the web root.',
+              'APK download link is not available. Configure apkDownloadUrl or place app-release.apk in the web folder.',
             ),
           ),
         );
