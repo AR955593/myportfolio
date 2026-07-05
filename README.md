@@ -2,7 +2,7 @@
 'A modern, responsive Flutter portfolio showcasing my skills, projects, technical expertise, education, certifications, and achievements with elegant animations, interactive UI, and seamless navigation. Designed to highlight my experience in Flutter, AI/ML, Python, and full-stack application development.'
 A new Flutter project.
 <h2>📱 <span style="font-weight:bold;"> <br> <br>
-website =>  https://myportfolio-hnp0557pb-ankit-rajputs-projects-a4789147.vercel.app/</span></h2>
+website =>  https://myportfolio-red-omega-20.vercel.app/</span></h2>
 
 ## 📱 ScreenShot For Android Application
 <p align="center">
@@ -15,7 +15,7 @@ website =>  https://myportfolio-hnp0557pb-ankit-rajputs-projects-a4789147.vercel
   <img src= "https://github.com/AR955593/myportfolio/blob/main/Screenshot_20260705-112143_MyProtfolio.png" width="200"/>
 </p>
 <h2>📱 <span style="font-weight:bold;">ScreenShot For Web Application <br> <br>
-website =>  https://myportfolio-hnp0557pb-ankit-rajputs-projects-a4789147.vercel.app/</span></h2>
+website => https://myportfolio-red-omega-20.vercel.app/ </span></h2>
 <p align="center">
 <img src="https://github.com/AR955593/myportfolio/blob/main/Screenshot%202026-07-05%20104138.png" width="200" />
   <img src="https://github.com/AR955593/myportfolio/blob/main/Screenshot%202026-07-05%20104153.png" width="200" />
