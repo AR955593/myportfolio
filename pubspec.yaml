@@ -66,6 +66,10 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/images/icon.jpg"
+  web:
+    generate: true
+    image_path: "assets/images/icon.jpg"
+
 
 # The following section is specific to Flutter packages.
 flutter:
