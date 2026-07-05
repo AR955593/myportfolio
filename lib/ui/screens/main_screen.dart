@@ -143,11 +143,13 @@ class _MainScreenState extends State<MainScreen> {
     final messenger = ScaffoldMessenger.of(context);
 
     if (kIsWeb) {
-      final uri = Uri.parse('${Uri.base.origin}/apk/app-release.apk');
+      final uri = Uri.parse('${Uri.base.origin}/app-release.apk');
       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
         messenger.showSnackBar(
           const SnackBar(
-            content: Text('APK download link is not available yet.'),
+            content: Text(
+              'APK download link is not available. Place app-release.apk in the web root.',
+            ),
           ),
         );
       }
@@ -158,10 +160,18 @@ class _MainScreenState extends State<MainScreen> {
         ? r'C:\Users\ankit\Videos\Flutter\MY protfolio\portfolio_app\build\app\outputs\flutter-apk\app-release.apk'
         : '/storage/emulated/0/Download/portfolio_app-release.apk';
 
+    final file = File(apkPath);
+    if (!file.existsSync()) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('APK not found at $apkPath')),
+      );
+      return;
+    }
+
     final uri = Uri.file(apkPath);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       messenger.showSnackBar(
-        SnackBar(content: Text('APK not found at $apkPath')),
+        SnackBar(content: Text('Unable to open APK at $apkPath')),
       );
     }
   }
