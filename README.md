@@ -1,5 +1,5 @@
 # portfolio_app
-
+'A modern, responsive Flutter portfolio showcasing my skills, projects, technical expertise, education, certifications, and achievements with elegant animations, interactive UI, and seamless navigation. Designed to highlight my experience in Flutter, AI/ML, Python, and full-stack application development.'
 A new Flutter project.
 
 ## Getting Started
