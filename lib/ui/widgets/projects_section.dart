@@ -8,53 +8,72 @@ class ProjectsSection extends StatelessWidget {
 
   final List<Map<String, dynamic>> projects = [
     {
-      'title': 'AgroScan',
+      'title': 'Agro Setu ',
       'subtitle': 'AI Crop Disease Detection Platform',
-      'description': 'AI-powered smart agriculture platform enabling crop disease detection via plant leaf image scanning, achieving 92% model accuracy. Features soil analysis, weather prediction, fertilizer recommendation, and an e-commerce marketplace.',
+      'description':
+          'AI-powered smart agriculture platform enabling crop disease detection via plant leaf image scanning, achieving 92% model accuracy. Features soil analysis, weather prediction, fertilizer recommendation, and an e-commerce marketplace.',
       'tech': ['Flutter', 'TensorFlow', 'OpenCV', 'Flask', 'Node.js'],
-      'github': 'https://github.com/AR955593/AgroScan',
+      'github': 'hhttps://github.com/AR955593/AgroSetu',
       'icon': Icons.agriculture,
       'gradientColors': [Color(0xFF11998e), Color(0xFF38ef7d)],
     },
     {
-      'title': 'Resume Job Matcher',
-      'subtitle': 'NLP-based Screening Tool',
-      'description': 'An NLP-based resume screening tool using Python keyword extraction and text similarity algorithms, improving resume-to-job matching accuracy by 35%.',
-      'tech': ['Python', 'NLP'],
-      'github': 'https://github.com/AR955593',
-      'icon': Icons.description,
-      'gradientColors': [Color(0xFF4776E6), Color(0xFF8E54E9)],
+      'title': 'PharmaGuard AI',
+      'subtitle': 'AI-Powered Pharmacogenomics Platform',
+      'description':
+          'AI-powered clinical decision support web application that analyzes patient genomic data (VCF files) to predict personalized drug response risks and generate personalized treatment recommendations based on established pharmacogenomic guidelines, helping improve medication safety and precision healthcare.',
+      'tech': ['Flutter', 'Python', 'AI', 'Machine Learning', 'NLP'],
+      'github': 'https://github.com/AR955593/Pharmaguard_AI',
+      'icon': Icons.medical_services,
+      'gradientColors': [Color(0xFF11998E), Color(0xFF38EF7D)],
     },
     {
-      'title': 'Weather Forecast App',
-      'subtitle': 'Cross-Platform Weather App',
-      'description': 'Cross-platform mobile app integrating real-time weather APIs to display temperature, humidity, wind speed, and 7-day forecasts.',
-      'tech': ['Flutter', 'REST API'],
-      'github': 'https://github.com/AR955593',
-      'icon': Icons.wb_cloudy,
-      'gradientColors': [Color(0xFF2980B9), Color(0xFF6DD5FA)],
+      'title': 'Music Player',
+      'subtitle': 'Modern Audio Streaming App',
+      'description':
+          'A feature-rich Flutter music player with an intuitive UI, playlist management, background playback, media controls, and smooth audio streaming experience designed for seamless music listening across Android devices.',
+      'tech': ['Flutter', 'Dart', 'Audio Player'],
+      'github': 'https://github.com/AR955593/music-player',
+      'icon': Icons.music_note,
+      'gradientColors': [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+    },
+    {
+      'title': 'Personal Portfolio',
+      'subtitle': 'Responsive Developer Portfolio',
+      'description':
+          'A modern, responsive Flutter portfolio showcasing my skills, projects, technical expertise, education, certifications, and achievements with elegant animations, interactive UI, and seamless navigation. Designed to highlight my experience in Flutter, AI/ML, Python, and full-stack application development.',
+      'tech': ['Flutter', 'Dart', 'Responsive UI'],
+      'github': 'https://github.com/AR955593/myportfolio',
+      'icon': Icons.person,
+      'gradientColors': [Color(0xFF4776E6), Color(0xFF8E54E9)],
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     bool isMobile = ResponsiveLayout.isMobile(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.work_outline, color: Theme.of(context).primaryColor, size: 28),
+            Icon(
+              Icons.work_outline,
+              color: Theme.of(context).primaryColor,
+              size: 28,
+            ),
             const SizedBox(width: 8),
             Text(
               'Featured Projects',
-              style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24),
+              style: Theme.of(
+                context,
+              ).textTheme.displayLarge?.copyWith(fontSize: 24),
             ),
           ],
         ),
         const SizedBox(height: 24),
-        
+
         MasonryGridView.count(
           crossAxisCount: isMobile ? 1 : 2,
           mainAxisSpacing: 20,
@@ -84,7 +103,7 @@ class _ProjectCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -111,7 +130,7 @@ class _ProjectCard extends StatelessWidget {
                 Icon(
                   project['icon'] as IconData,
                   size: 48,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -150,7 +169,9 @@ class _ProjectCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   project['description'],
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(height: 1.5),
                 ),
                 const SizedBox(height: 16),
                 Wrap(
@@ -158,9 +179,14 @@ class _ProjectCard extends StatelessWidget {
                   runSpacing: 8,
                   children: (project['tech'] as List<String>).map((t) {
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -187,10 +213,10 @@ class _ProjectCard extends StatelessWidget {
                     icon: const Icon(Icons.code),
                     label: const Text('View Source'),
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

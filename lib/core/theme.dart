@@ -42,7 +42,7 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: lightPrimary,
       surface: lightSurface,
-    ).copyWith(background: lightBackground),
+    ).copyWith(surface: lightBackground),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -64,6 +64,6 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: darkPrimary,
       surface: darkSurface,
-    ).copyWith(background: darkBackground),
+    ).copyWith(surface: darkBackground),
   );
 }

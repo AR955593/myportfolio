@@ -9,14 +9,14 @@ class AboutSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor.withOpacity(0.8),
+        color: Theme.of(context).cardColor.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -27,17 +27,23 @@ class AboutSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.person, color: Theme.of(context).primaryColor, size: 28),
+              Icon(
+                Icons.person,
+                color: Theme.of(context).primaryColor,
+                size: 28,
+              ),
               const SizedBox(width: 8),
               Text(
                 'About Me',
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24),
+                style: Theme.of(
+                  context,
+                ).textTheme.displayLarge?.copyWith(fontSize: 24),
               ),
             ],
           ),
           const SizedBox(height: 16),
           Text(
-            'Computer Science and Data Science undergraduate with hands-on expertise in Full Stack Development, Machine Learning, and Data Structures and Algorithms. Skilled in building production-ready web and mobile applications using React.js, Flutter, Python, Node.js, and Flask. Experienced in developing AI-powered systems using TensorFlow and OpenCV for computer vision and image processing. Solved 120+ Data Structures and Algorithms problems on LeetCode and HackerRank. Passionate about creating scalable, intelligent software solutions combining artificial intelligence, data science, and full stack engineering.',
+            'CComputer Science and Data Science undergraduate with hands-on expertise in Full Stack Development, Machine Learning, and DSA. Skilled in building production-ready web and mobile applications using React.js, Flutter, Python, Node.js, and Flask. Experienced in developing AI-powered systems using TensorFlow and OpenCV for computer vision and image processing. .',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.6),
           ),
           const SizedBox(height: 24),
@@ -50,34 +56,38 @@ class AboutSection extends StatelessWidget {
             spacing: 12,
             runSpacing: 12,
             children: [
-              _BuildTechChip('Flutter'),
-              _BuildTechChip('React.js'),
-              _BuildTechChip('Python'),
-              _BuildTechChip('Node.js'),
-              _BuildTechChip('TensorFlow'),
-              _BuildTechChip('OpenCV'),
-              _BuildTechChip('SQL'),
-              _BuildTechChip('Firebase'),
+              _buildTechChip('Flutter'),
+              _buildTechChip('React.js'),
+              _buildTechChip('Python'),
+              _buildTechChip('Node.js'),
+              _buildTechChip('TensorFlow'),
+              _buildTechChip('OpenCV'),
+              _buildTechChip('SQL'),
+              _buildTechChip('Firebase'),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _BuildTechChip(String label) {
+  Widget _buildTechChip(String label) {
     return Builder(
       builder: (context) {
         return Chip(
           label: Text(label),
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-          side: BorderSide(color: Theme.of(context).primaryColor.withOpacity(0.3)),
+          backgroundColor: Theme.of(
+            context,
+          ).primaryColor.withValues(alpha: 0.1),
+          side: BorderSide(
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+          ),
           labelStyle: TextStyle(
             color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
           ),
         );
-      }
+      },
     );
   }
 }

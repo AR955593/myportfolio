@@ -9,22 +9,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:portfolio_app/main.dart';
-import 'package:provider/provider.dart';
 import 'package:portfolio_app/providers/theme_provider.dart';
+import 'package:portfolio_app/ui/screens/main_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   testWidgets('App smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
       MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ],
+        providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
         child: const PortfolioApp(),
       ),
     );
 
     // Verify app starts without error
     expect(find.byType(PortfolioApp), findsOneWidget);
+  });
+
+  testWidgets('Install App button is visible in the main screen', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
+        child: const MaterialApp(home: MainScreen()),
+      ),
+    );
+
+    expect(find.text('Install App'), findsOneWidget);
   });
 }

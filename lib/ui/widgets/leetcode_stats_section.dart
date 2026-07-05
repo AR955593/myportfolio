@@ -46,10 +46,18 @@ class _LeetCodeStatsSectionState extends State<LeetCodeStatsSection> {
     int all = 0, easy = 0, medium = 0, hard = 0;
 
     for (var stat in stats) {
-      if (stat['difficulty'] == 'All') all = stat['count'];
-      if (stat['difficulty'] == 'Easy') easy = stat['count'];
-      if (stat['difficulty'] == 'Medium') medium = stat['count'];
-      if (stat['difficulty'] == 'Hard') hard = stat['count'];
+      if (stat['difficulty'] == 'All') {
+        all = stat['count'] as int;
+      }
+      if (stat['difficulty'] == 'Easy') {
+        easy = stat['count'] as int;
+      }
+      if (stat['difficulty'] == 'Medium') {
+        medium = stat['count'] as int;
+      }
+      if (stat['difficulty'] == 'Hard') {
+        hard = stat['count'] as int;
+      }
     }
 
     return Column(
@@ -57,11 +65,17 @@ class _LeetCodeStatsSectionState extends State<LeetCodeStatsSection> {
       children: [
         Row(
           children: [
-            Icon(Icons.leaderboard, color: Theme.of(context).primaryColor, size: 28),
+            Icon(
+              Icons.leaderboard,
+              color: Theme.of(context).primaryColor,
+              size: 28,
+            ),
             const SizedBox(width: 8),
             Text(
               'LeetCode Stats',
-              style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 24),
+              style: Theme.of(
+                context,
+              ).textTheme.displayLarge?.copyWith(fontSize: 24),
             ),
           ],
         ),
@@ -71,7 +85,9 @@ class _LeetCodeStatsSectionState extends State<LeetCodeStatsSection> {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withOpacity(0.1),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -83,8 +99,11 @@ class _LeetCodeStatsSectionState extends State<LeetCodeStatsSection> {
           child: Column(
             children: [
               Text(
-                'Total Solved: \$all',
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                'Total Solved: $all',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 16),
               Row(
@@ -106,7 +125,7 @@ class _LeetCodeStatsSectionState extends State<LeetCodeStatsSection> {
     return Column(
       children: [
         Text(
-          '\$value',
+          '$value',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -114,10 +133,7 @@ class _LeetCodeStatsSectionState extends State<LeetCodeStatsSection> {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }

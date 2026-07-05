@@ -2,8 +2,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../widgets/about_section.dart';
+import '../../widgets/contact_section.dart';
+import '../../widgets/projects_section.dart';
+import '../../widgets/skills_section.dart';
+
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
+  final ValueChanged<int>? onSectionChanged;
+
+  const HomeTab({super.key, this.onSectionChanged});
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -16,10 +23,20 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   late final Animation<double> _pulse;
   late final Animation<double> _fade;
   late final Animation<double> _shift;
+  late final ScrollController _scrollController;
+
+  final GlobalKey _aboutKey = GlobalKey();
+  final GlobalKey _skillsKey = GlobalKey();
+  final GlobalKey _projectsKey = GlobalKey();
+  final GlobalKey _contactKey = GlobalKey();
+  final GlobalKey _scrollViewKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_handleScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _handleScroll());
 
     _pulseController = AnimationController(
       vsync: this,
@@ -46,9 +63,11 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_handleScroll);
     _pulseController.dispose();
     _fadeController.dispose();
     _shiftController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -98,157 +117,287 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         child: FadeTransition(
           opacity: _fade,
           child: SingleChildScrollView(
+            key: _scrollViewKey,
+            controller: _scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 30),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1100),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 30),
 
-                // Glowing Pulsing Profile Ring
-                AnimatedBuilder(
-                  animation: _pulse,
-                  builder: (context, child) {
-                    return Transform.scale(scale: _pulse.value, child: child);
-                  },
-                  child: _buildProfileRing(context),
-                ),
-
-                const SizedBox(height: 28),
-
-                // Gradient Name
-                ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
-                    colors: [Color(0xFFBB86FC), Color(0xFF00FFCC)],
-                  ).createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height)),
-                  blendMode: BlendMode.srcIn,
-                  child: const Text(
-                    'Ankit Rajput',
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
+                    // Glowing Pulsing Profile Ring
+                    AnimatedBuilder(
+                      animation: _pulse,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _pulse.value,
+                          child: child,
+                        );
+                      },
+                      child: _buildProfileRing(context),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
 
-                const SizedBox(height: 12),
+                    const SizedBox(height: 28),
 
-                // Role Badge
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFBB86FC), Color(0xFF6200EE)],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF6200EE).withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                    // Gradient Name
+                    ShaderMask(
+                      shaderCallback: (bounds) =>
+                          const LinearGradient(
+                            colors: [Color(0xFFBB86FC), Color(0xFF00FFCC)],
+                          ).createShader(
+                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                          ),
+                      blendMode: BlendMode.srcIn,
+                      child: const Text(
+                        'Ankit Rajput',
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                    ],
-                  ),
-                  child: const Text(
-                    'Full Stack Developer · Data Science Student',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
 
-                const SizedBox(height: 14),
+                    const SizedBox(height: 12),
 
-                // Tagline
-                Text(
-                  '"Building AI Powered Applications\n& Scalable Software Systems"',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    color: isDark ? Colors.white60 : Colors.black54,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                    // Role Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFBB86FC), Color(0xFF6200EE)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF6200EE).withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Text(
+                        'Full Stack Developer · Data Science Student',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
 
-                const SizedBox(height: 28),
+                    const SizedBox(height: 14),
 
-                // Stat Pills
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _StatPill(
-                        label: '120+',
-                        sub: 'DSA Solved',
-                        icon: Icons.code,
-                        color: const Color(0xFF00FFCC)),
-                    const SizedBox(width: 10),
-                    _StatPill(
-                        label: '3+',
-                        sub: 'Projects',
-                        icon: Icons.rocket_launch,
-                        color: const Color(0xFFBB86FC)),
-                    const SizedBox(width: 10),
-                    _StatPill(
-                        label: '5★',
-                        sub: 'HackerRank',
-                        icon: Icons.star,
-                        color: const Color(0xFFFFD700)),
+                    // Tagline
+                    Text(
+                      '"Building AI Powered Applications\n& Scalable Software Systems"',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const SizedBox(height: 24),
+                    _buildSectionNav(),
+                    const SizedBox(height: 24),
+
+                    // Stat Pills
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        _StatPill(
+                          label: '120+',
+                          sub: 'DSA Solved',
+                          icon: Icons.code,
+                          color: const Color(0xFF00FFCC),
+                        ),
+                        _StatPill(
+                          label: '3+',
+                          sub: 'Projects',
+                          icon: Icons.rocket_launch,
+                          color: const Color(0xFFBB86FC),
+                        ),
+                        _StatPill(
+                          label: '5★',
+                          sub: 'HackerRank',
+                          icon: Icons.star,
+                          color: const Color(0xFFFFD700),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Glassmorphism Info Card
+                    _buildInfoCard(isDark),
+
+                    const SizedBox(height: 28),
+
+                    // Gradient Social Buttons
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        _GradientSocialButton(
+                          text: 'GitHub',
+                          icon: Icons.code,
+                          url: 'https://github.com/AR955593',
+                          colors: const [Color(0xFF434343), Color(0xFF000000)],
+                        ),
+                        _GradientSocialButton(
+                          text: 'LinkedIn',
+                          icon: Icons.work,
+                          url: 'https://linkedin.com/in/ar955593',
+                          colors: const [Color(0xFF0077B5), Color(0xFF005580)],
+                        ),
+                        _GradientSocialButton(
+                          text: 'LeetCode',
+                          icon: Icons.leaderboard,
+                          url: 'https://leetcode.com/u/AR955593',
+                          colors: const [Color(0xFFFFA116), Color(0xFFE07B00)],
+                        ),
+                        _GradientSocialButton(
+                          text: 'HackerRank',
+                          icon: Icons.star,
+                          url: 'https://hackerrank.com/ARRAJPUT',
+                          colors: const [Color(0xFF00EA64), Color(0xFF00A844)],
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 40),
+                    Container(
+                      key: _aboutKey,
+                      width: double.infinity,
+                      child: const AboutSection(),
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      key: _skillsKey,
+                      width: double.infinity,
+                      child: const SkillsSection(),
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      key: _projectsKey,
+                      width: double.infinity,
+                      child: ProjectsSection(),
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      key: _contactKey,
+                      width: double.infinity,
+                      child: const ContactSection(),
+                    ),
+                    const SizedBox(height: 80),
                   ],
                 ),
-
-                const SizedBox(height: 24),
-
-                // Glassmorphism Info Card
-                _buildInfoCard(isDark),
-
-                const SizedBox(height: 28),
-
-                // Gradient Social Buttons
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    _GradientSocialButton(
-                      text: 'GitHub',
-                      icon: Icons.code,
-                      url: 'https://github.com/AR955593',
-                      colors: const [Color(0xFF434343), Color(0xFF000000)],
-                    ),
-                    _GradientSocialButton(
-                      text: 'LinkedIn',
-                      icon: Icons.work,
-                      url: 'https://linkedin.com/in/ar955593',
-                      colors: const [Color(0xFF0077B5), Color(0xFF005580)],
-                    ),
-                    _GradientSocialButton(
-                      text: 'LeetCode',
-                      icon: Icons.leaderboard,
-                      url: 'https://leetcode.com/u/AR955593',
-                      colors: const [Color(0xFFFFA116), Color(0xFFE07B00)],
-                    ),
-                    _GradientSocialButton(
-                      text: 'HackerRank',
-                      icon: Icons.star,
-                      url: 'https://hackerrank.com/ARRAJPUT',
-                      colors: const [Color(0xFF00EA64), Color(0xFF00A844)],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 120),
-              ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionNav() {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        _SectionNavButton(
+          key: const ValueKey('section-nav-about'),
+          label: 'About',
+          onTap: () {
+            widget.onSectionChanged?.call(1);
+            _scrollToSection(_aboutKey);
+          },
+        ),
+        _SectionNavButton(
+          key: const ValueKey('section-nav-skills'),
+          label: 'Skills',
+          onTap: () {
+            widget.onSectionChanged?.call(2);
+            _scrollToSection(_skillsKey);
+          },
+        ),
+        _SectionNavButton(
+          key: const ValueKey('section-nav-projects'),
+          label: 'Projects',
+          onTap: () {
+            widget.onSectionChanged?.call(3);
+            _scrollToSection(_projectsKey);
+          },
+        ),
+        _SectionNavButton(
+          key: const ValueKey('section-nav-contact'),
+          label: 'Contact',
+          onTap: () {
+            widget.onSectionChanged?.call(4);
+            _scrollToSection(_contactKey);
+          },
+        ),
+      ],
+    );
+  }
+
+  void _handleScroll() {
+    final aboutOffset = _getOffset(_aboutKey);
+    final skillsOffset = _getOffset(_skillsKey);
+    final projectsOffset = _getOffset(_projectsKey);
+    final contactOffset = _getOffset(_contactKey);
+    const viewportThreshold = 220.0;
+
+    if (contactOffset <= viewportThreshold + 120) {
+      widget.onSectionChanged?.call(4);
+    } else if (projectsOffset <= viewportThreshold + 120) {
+      widget.onSectionChanged?.call(3);
+    } else if (skillsOffset <= viewportThreshold + 120) {
+      widget.onSectionChanged?.call(2);
+    } else if (aboutOffset <= viewportThreshold + 120) {
+      widget.onSectionChanged?.call(1);
+    } else {
+      widget.onSectionChanged?.call(0);
+    }
+  }
+
+  double _getOffset(GlobalKey key) {
+    final context = key.currentContext;
+    final viewportContext = _scrollViewKey.currentContext;
+    if (context == null || viewportContext == null) return double.infinity;
+
+    final renderBox = context.findRenderObject() as RenderBox?;
+    final viewportBox = viewportContext.findRenderObject() as RenderBox?;
+    if (renderBox == null || viewportBox == null) return double.infinity;
+
+    final sectionOffset = renderBox.localToGlobal(Offset.zero);
+    final viewportOffset = viewportBox.localToGlobal(Offset.zero);
+    return sectionOffset.dy - viewportOffset.dy;
+  }
+
+  void _scrollToSection(GlobalKey key) {
+    final sectionContext = key.currentContext;
+    if (sectionContext == null) return;
+    Scrollable.ensureVisible(
+      sectionContext,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+      alignment: 0.1,
     );
   }
 
@@ -279,9 +428,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
           height: 170,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isDark
-                ? const Color(0xFF0F0C29)
-                : const Color(0xFFE8EAF6),
+            color: isDark ? const Color(0xFF0F0C29) : const Color(0xFFE8EAF6),
           ),
         ),
         // Profile image
@@ -322,13 +469,19 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _infoRow(Icons.location_on, 'Kanpur, Uttar Pradesh, India', isDark),
-              const SizedBox(height: 10),
-              _infoRow(Icons.school,
-                  'B.Tech CSE (Data Science) · MPEC Kanpur · 2023–2027', isDark),
+              _infoRow(
+                Icons.location_on,
+                'Kanpur, Uttar Pradesh, India',
+                isDark,
+              ),
               const SizedBox(height: 10),
               _infoRow(
-                  Icons.email, 'ankitrajankitraj817@gmail.com', isDark),
+                Icons.school,
+                'B.Tech CSE (Data Science) · MPEC Kanpur · 2023–2027',
+                isDark,
+              ),
+              const SizedBox(height: 10),
+              _infoRow(Icons.email, 'ankitrajankitraj817@gmail.com', isDark),
               const SizedBox(height: 10),
               _infoRow(Icons.phone, '+91-9555937872', isDark),
             ],
@@ -384,14 +537,52 @@ class _StatPill extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 20),
           const SizedBox(height: 4),
-          Text(label,
-              style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15)),
-          Text(sub,
-              style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+            ),
+          ),
+          Text(sub, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         ],
+      ),
+    );
+  }
+}
+
+class _SectionNavButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _SectionNavButton({
+    super.key,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor.withOpacity(0.95),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: Theme.of(context).dividerColor.withOpacity(0.3),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        ),
       ),
     );
   }
@@ -422,8 +613,7 @@ class _GradientSocialButton extends StatelessWidget {
         }
       },
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
         decoration: BoxDecoration(
           gradient: LinearGradient(colors: colors),
           borderRadius: BorderRadius.circular(30),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -14,7 +15,7 @@ class ApiService {
       }
       return null;
     } catch (e) {
-      print('Error fetching GitHub stats: \$e');
+      debugPrint('Error fetching GitHub stats: $e');
       return null;
     }
   }
@@ -36,7 +37,7 @@ class ApiService {
         }
       }
       ''';
-      
+
       final response = await http.post(
         Uri.parse(leetcodeUrl),
         headers: {'Content-Type': 'application/json'},
@@ -48,7 +49,7 @@ class ApiService {
       }
       return null;
     } catch (e) {
-      print('Error fetching LeetCode stats: \$e');
+      debugPrint('Error fetching LeetCode stats: $e');
       return null;
     }
   }

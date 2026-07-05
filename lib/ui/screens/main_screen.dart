@@ -1,8 +1,9 @@
-import 'dart:ui';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../providers/theme_provider.dart';
 import 'tabs/about_tab.dart';
@@ -19,42 +20,89 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    const HomeTab(),
-    const AboutTab(),
-    const SkillsTab(),
-    const ProjectsTab(),
-    const ContactTab(),
-  ];
+  int _pageIndex = 0;
+  int _activeNavIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      extendBody: true, // Allows body to scroll behind the navigation bar
-      extendBodyBehindAppBar: true, 
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: isDark
+            ? Colors.black.withValues(alpha: 0.25)
+            : Colors.white.withValues(alpha: 0.75),
         elevation: 0,
-        actions: [
-          Consumer<ThemeProvider>(
-            builder: (context, themeProvider, child) {
-              return IconButton(
-                icon: Icon(
-                  themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                  color: isDark ? Colors.white : Colors.black87,
+        titleSpacing: 16,
+        toolbarHeight: 76,
+        title: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: const AssetImage('assets/images/profile.jpg'),
+              backgroundColor: Theme.of(
+                context,
+              ).primaryColor.withValues(alpha: 0.15),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Ankit Rajput',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _navButton(context, 'Home', 0),
+                    _navButton(context, 'About', 1),
+                    _navButton(context, 'Skills', 2),
+                    _navButton(context, 'Projects', 3),
+                    _navButton(context, 'Contact', 4),
+                  ],
                 ),
-                onPressed: () {
-                  themeProvider.toggleTheme();
-                },
-              );
-            },
-          ),
-          const SizedBox(width: 16),
-        ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Tooltip(
+                message: 'Install app',
+                child: TextButton.icon(
+                  onPressed: () => _handleInstallApp(context),
+                  icon: const Icon(Icons.download_rounded, size: 18),
+                  label: const Text('Install App'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).primaryColor.withValues(alpha: 0.12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                return IconButton(
+                  onPressed: themeProvider.toggleTheme,
+                  icon: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.light_mode
+                        : Icons.dark_mode,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -63,68 +111,91 @@ class _MainScreenState extends State<MainScreen> {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF0F0C29), // Deep Space
-                    const Color(0xFF302B63), // Purple/Blue metallic
-                    const Color(0xFF24243E), // Dark slate
+                    const Color(0xFF0F0C29),
+                    const Color(0xFF302B63),
+                    const Color(0xFF24243E),
                   ]
-                : [
-                    const Color(0xFFFDFBFB), // Light pearl
-                    const Color(0xFFEBEDEE), // Light gray
-                  ],
+                : [const Color(0xFFFDFBFB), const Color(0xFFEBEDEE)],
           ),
         ),
         child: IndexedStack(
-          index: _currentIndex,
-          children: _pages,
-        ),
-      ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              spreadRadius: 1,
-            ),
+          index: _pageIndex,
+          children: [
+            HomeTab(onSectionChanged: _handleSectionChanged),
+            const AboutTab(),
+            const SkillsTab(),
+            const ProjectsTab(),
+            const ContactTab(),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-            child: SalomonBottomBar(
-                currentIndex: _currentIndex,
-                onTap: (i) => setState(() => _currentIndex = i),
-                selectedItemColor: Theme.of(context).primaryColor,
-                unselectedItemColor: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
-                itemPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                items: [
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.space_dashboard_rounded),
-                    title: const Text("Home"),
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.account_circle_rounded),
-                    title: const Text("About"),
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.psychology_rounded),
-                    title: const Text("Skills"),
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.developer_mode_rounded),
-                    title: const Text("Projects"),
-                  ),
-                  SalomonBottomBarItem(
-                    icon: const Icon(Icons.contact_mail_rounded),
-                    title: const Text("Contact"),
-                  ),
-                ],
-              ),
+      ),
+    );
+  }
+
+  void _handleNavSelection(int index) {
+    setState(() {
+      _activeNavIndex = index;
+      _pageIndex = index;
+    });
+  }
+
+  Future<void> _handleInstallApp(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (kIsWeb) {
+      final uri = Uri.parse('${Uri.base.origin}/apk/app-release.apk');
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('APK download link is not available yet.'),
+          ),
+        );
+      }
+      return;
+    }
+
+    final apkPath = Platform.isWindows
+        ? r'C:\Users\ankit\Videos\Flutter\MY protfolio\portfolio_app\build\app\outputs\flutter-apk\app-release.apk'
+        : '/storage/emulated/0/Download/portfolio_app-release.apk';
+
+    final uri = Uri.file(apkPath);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('APK not found at $apkPath')),
+      );
+    }
+  }
+
+  void _handleSectionChanged(int index) {
+    if (!mounted) return;
+    setState(() {
+      _activeNavIndex = index;
+    });
+  }
+
+  Widget _navButton(BuildContext context, String label, int index) {
+    final isSelected = _activeNavIndex == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: TextButton(
+        onPressed: () => _handleNavSelection(index),
+        style: TextButton.styleFrom(
+          foregroundColor: isSelected
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).textTheme.bodyMedium?.color,
+          backgroundColor: isSelected
+              ? Theme.of(context).primaryColor.withValues(alpha: 0.12)
+              : Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
           ),
         ),
       ),

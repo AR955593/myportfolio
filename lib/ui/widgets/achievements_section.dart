@@ -41,7 +41,23 @@ class AchievementsSection extends StatelessWidget {
               ),
               _buildTimelineItem(
                 context,
-                title: '120+ DSA Problems Solved',
+                title: 'Intermediate 12th',
+                subtitle: 'Jagrati Public School, Talgram, Kannauj  | 2021 – 2022 | 79%',
+                icon: Icons.school,
+                isLast: false,
+              ),
+              
+              _buildTimelineItem(
+                context,
+                title: 'High School 10th',
+                subtitle: 'Jagrati Public School, Talgram, Kannauj  | 2019 – 2020 | 81%',
+                icon: Icons.school,
+                isLast: false,
+              ),
+
+              _buildTimelineItem(
+                context,
+                title: '150+ DSA Problems Solved',
                 subtitle: 'LeetCode & HackerRank',
                 icon: Icons.code,
                 isLast: false,
@@ -62,7 +78,15 @@ class AchievementsSection extends StatelessWidget {
               ),
               _buildTimelineItem(
                 context,
-                title: 'PW Hackathon 2024 Participant',
+                title: 'PW Hackathon feb-2026 Participant',
+                subtitle: 'Collaborated in a team to build innovative software solutions',
+                icon: Icons.group,
+                isLast: true,
+              ),
+              
+              _buildTimelineItem(
+                context,
+                title: 'IIT PATNA Hackathon  May-2026  Participant',
                 subtitle: 'Collaborated in a team to build innovative software solutions',
                 icon: Icons.group,
                 isLast: true,
