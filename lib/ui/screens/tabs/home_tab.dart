@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:portfolio_app/services/resume_service.dart';
 
 import '../../widgets/about_section.dart';
 import '../../widgets/contact_section.dart';
@@ -21,9 +22,22 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   late final AnimationController _fadeController;
   late final AnimationController _shiftController;
   late final Animation<double> _pulse;
-  late final Animation<double> _fade;
   late final Animation<double> _shift;
   late final ScrollController _scrollController;
+
+  // Staggered Animations
+  late final Animation<double> _profileFade;
+  late final Animation<Offset> _profileSlide;
+  late final Animation<double> _titleFade;
+  late final Animation<Offset> _titleSlide;
+  late final Animation<double> _statsFade;
+  late final Animation<Offset> _statsSlide;
+  late final Animation<double> _infoFade;
+  late final Animation<Offset> _infoSlide;
+  late final Animation<double> _socialFade;
+  late final Animation<Offset> _socialSlide;
+  late final Animation<double> _bodyFade;
+  late final Animation<Offset> _bodySlide;
 
   final GlobalKey _aboutKey = GlobalKey();
   final GlobalKey _skillsKey = GlobalKey();
@@ -48,9 +62,58 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
 
     _fadeController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1600),
     )..forward();
-    _fade = CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
+
+    const curve = Curves.easeOutCubic;
+
+    _profileFade = CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.0, 0.4, curve: curve),
+    );
+    _profileSlide = Tween<Offset>(begin: const Offset(0.0, 0.15), end: Offset.zero).animate(
+      CurvedAnimation(parent: _fadeController, curve: const Interval(0.0, 0.4, curve: curve)),
+    );
+
+    _titleFade = CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.15, 0.55, curve: curve),
+    );
+    _titleSlide = Tween<Offset>(begin: const Offset(0.0, 0.15), end: Offset.zero).animate(
+      CurvedAnimation(parent: _fadeController, curve: const Interval(0.15, 0.55, curve: curve)),
+    );
+
+    _statsFade = CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.3, 0.7, curve: curve),
+    );
+    _statsSlide = Tween<Offset>(begin: const Offset(0.0, 0.15), end: Offset.zero).animate(
+      CurvedAnimation(parent: _fadeController, curve: const Interval(0.3, 0.7, curve: curve)),
+    );
+
+    _infoFade = CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.45, 0.85, curve: curve),
+    );
+    _infoSlide = Tween<Offset>(begin: const Offset(0.0, 0.15), end: Offset.zero).animate(
+      CurvedAnimation(parent: _fadeController, curve: const Interval(0.45, 0.85, curve: curve)),
+    );
+
+    _socialFade = CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.6, 1.0, curve: curve),
+    );
+    _socialSlide = Tween<Offset>(begin: const Offset(0.0, 0.15), end: Offset.zero).animate(
+      CurvedAnimation(parent: _fadeController, curve: const Interval(0.6, 1.0, curve: curve)),
+    );
+
+    _bodyFade = CurvedAnimation(
+      parent: _fadeController,
+      curve: const Interval(0.7, 1.0, curve: curve),
+    );
+    _bodySlide = Tween<Offset>(begin: const Offset(0.0, 0.1), end: Offset.zero).animate(
+      CurvedAnimation(parent: _fadeController, curve: const Interval(0.7, 1.0, curve: curve)),
+    );
 
     _shiftController = AnimationController(
       vsync: this,
@@ -93,18 +156,16 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
             gradient: isDark
                 ? LinearGradient(
                     colors: const [
-                      Color(0xFF0F0C29),
-                      Color(0xFF302B63),
-                      Color(0xFF24243E),
+                      Color(0xFF0F1115),
+                      Color(0xFF16181D),
                     ],
                     begin: begin,
                     end: end,
                   )
                 : LinearGradient(
                     colors: const [
-                      Color(0xFFE8EAF6),
-                      Color(0xFFF3E5F5),
-                      Color(0xFFE3F2FD),
+                      Color(0xFFF8F9FA),
+                      Color(0xFFF1F3F5),
                     ],
                     begin: begin,
                     end: end,
@@ -114,198 +175,229 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         );
       },
       child: SafeArea(
-        child: FadeTransition(
-          opacity: _fade,
-          child: SingleChildScrollView(
-            key: _scrollViewKey,
-            controller: _scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1100),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 30),
+        child: SingleChildScrollView(
+          key: _scrollViewKey,
+          controller: _scrollController,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 30),
 
-                    // Glowing Pulsing Profile Ring
-                    AnimatedBuilder(
-                      animation: _pulse,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _pulse.value,
-                          child: child,
-                        );
-                      },
-                      child: _buildProfileRing(context),
+                  // Staggered Profile Ring
+                  FadeTransition(
+                    opacity: _profileFade,
+                    child: SlideTransition(
+                      position: _profileSlide,
+                      child: AnimatedBuilder(
+                        animation: _pulse,
+                        builder: (context, child) {
+                          return Transform.scale(
+                            scale: _pulse.value,
+                            child: child,
+                          );
+                        },
+                        child: _buildProfileRing(context),
+                      ),
                     ),
+                  ),
 
-                    const SizedBox(height: 28),
+                  const SizedBox(height: 28),
 
-                    // Gradient Name
-                    ShaderMask(
-                      shaderCallback: (bounds) =>
-                          const LinearGradient(
-                            colors: [Color(0xFFBB86FC), Color(0xFF00FFCC)],
-                          ).createShader(
-                            Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                  // Staggered Name + Badge + Tagline
+                  FadeTransition(
+                    opacity: _titleFade,
+                    child: SlideTransition(
+                      position: _titleSlide,
+                      child: Column(
+                        children: [
+                          Text(
+                            'Ankit Rajput',
+                            style: TextStyle(
+                              fontSize: 42,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                              color: Theme.of(context).textTheme.displayLarge?.color,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                      blendMode: BlendMode.srcIn,
-                      child: const Text(
-                        'Ankit Rajput',
-                        style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Role Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFBB86FC), Color(0xFF6200EE)],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF6200EE).withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                              ),
+                            ),
+                            child: Text(
+                              'Full Stack Developer · Data Science Student',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            '"Building AI Powered Applications\n& Scalable Software Systems"',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontStyle: FontStyle.italic,
+                              color: isDark ? Colors.white60 : Colors.black54,
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
-                      child: const Text(
-                        'Full Stack Developer · Data Science Student',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  _buildSectionNav(),
+                  const SizedBox(height: 24),
+
+                  // Staggered Stats Pills
+                  FadeTransition(
+                    opacity: _statsFade,
+                    child: SlideTransition(
+                      position: _statsSlide,
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          _StatPill(
+                            label: '150+',
+                            sub: 'DSA Solved',
+                            icon: Icons.code,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          _StatPill(
+                            label: '4+',
+                            sub: 'Projects',
+                            icon: Icons.rocket_launch,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          _StatPill(
+                            label: '3★',
+                            sub: 'HackerRank',
+                            icon: Icons.star,
+                            color: isDark ? const Color(0xFFF59E0B) : const Color(0xFFD97706),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
 
-                    const SizedBox(height: 14),
+                  const SizedBox(height: 24),
 
-                    // Tagline
-                    Text(
-                      '"Building AI Powered Applications\n& Scalable Software Systems"',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontStyle: FontStyle.italic,
-                        color: isDark ? Colors.white60 : Colors.black54,
-                        height: 1.5,
+                  // Staggered Info Card
+                  FadeTransition(
+                    opacity: _infoFade,
+                    child: SlideTransition(
+                      position: _infoSlide,
+                      child: _buildInfoCard(isDark),
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Staggered Social Buttons
+                  FadeTransition(
+                    opacity: _socialFade,
+                    child: SlideTransition(
+                      position: _socialSlide,
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          _PremiumSocialButton(
+                            text: 'Resume',
+                            icon: Icons.description_rounded,
+                            onTap: () async {
+                              await ResumeService.generateAndDownload();
+                            },
+                            brandColor: Theme.of(context).primaryColor,
+                          ),
+                          _PremiumSocialButton(
+                            text: 'GitHub',
+                            icon: Icons.code,
+                            url: 'https://github.com/AR955593',
+                            brandColor: isDark ? Colors.white : Colors.black87,
+                          ),
+                          _PremiumSocialButton(
+                            text: 'LinkedIn',
+                            icon: Icons.work,
+                            url: 'https://linkedin.com/in/ar955593',
+                            brandColor: const Color(0xFF0077B5),
+                          ),
+                          _PremiumSocialButton(
+                            text: 'LeetCode',
+                            icon: Icons.leaderboard,
+                            url: 'https://leetcode.com/u/AR955593',
+                            brandColor: const Color(0xFFFFA116),
+                          ),
+                          _PremiumSocialButton(
+                            text: 'HackerRank',
+                            icon: Icons.star,
+                            url: 'https://hackerrank.com/ARRAJPUT',
+                            brandColor: const Color(0xFF00EA64),
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
+                  ),
 
-                    const SizedBox(height: 24),
-                    _buildSectionNav(),
-                    const SizedBox(height: 24),
+                  const SizedBox(height: 40),
 
-                    // Stat Pills
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: [
-                        _StatPill(
-                          label: '150+',
-                          sub: 'DSA Solved',
-                          icon: Icons.code,
-                          color: const Color(0xFF00FFCC),
-                        ),
-                        _StatPill(
-                          label: '4+',
-                          sub: 'Projects',
-                          icon: Icons.rocket_launch,
-                          color: const Color(0xFFBB86FC),
-                        ),
-                        _StatPill(
-                          label: '3★',
-                          sub: 'HackerRank',
-                          icon: Icons.star,
-                          color: const Color(0xFFFFD700),
-                        ),
-                      ],
+                  // Staggered Body Sections
+                  FadeTransition(
+                    opacity: _bodyFade,
+                    child: SlideTransition(
+                      position: _bodySlide,
+                      child: Column(
+                        children: [
+                          Container(
+                            key: _aboutKey,
+                            width: double.infinity,
+                            child: const AboutSection(),
+                          ),
+                          const SizedBox(height: 30),
+                          Container(
+                            key: _skillsKey,
+                            width: double.infinity,
+                            child: const SkillsSection(),
+                          ),
+                          const SizedBox(height: 30),
+                          Container(
+                            key: _projectsKey,
+                            width: double.infinity,
+                            child: ProjectsSection(),
+                          ),
+                          const SizedBox(height: 30),
+                          Container(
+                            key: _contactKey,
+                            width: double.infinity,
+                            child: const ContactSection(),
+                          ),
+                        ],
+                      ),
                     ),
-
-                    const SizedBox(height: 24),
-
-                    // Glassmorphism Info Card
-                    _buildInfoCard(isDark),
-
-                    const SizedBox(height: 28),
-
-                    // Gradient Social Buttons
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        _GradientSocialButton(
-                          text: 'GitHub',
-                          icon: Icons.code,
-                          url: 'https://github.com/AR955593',
-                          colors: const [Color(0xFF434343), Color(0xFF000000)],
-                        ),
-                        _GradientSocialButton(
-                          text: 'LinkedIn',
-                          icon: Icons.work,
-                          url: 'https://linkedin.com/in/ar955593',
-                          colors: const [Color(0xFF0077B5), Color(0xFF005580)],
-                        ),
-                        _GradientSocialButton(
-                          text: 'LeetCode',
-                          icon: Icons.leaderboard,
-                          url: 'https://leetcode.com/u/AR955593',
-                          colors: const [Color(0xFFFFA116), Color(0xFFE07B00)],
-                        ),
-                        _GradientSocialButton(
-                          text: 'HackerRank',
-                          icon: Icons.star,
-                          url: 'https://hackerrank.com/ARRAJPUT',
-                          colors: const [Color(0xFF00EA64), Color(0xFF00A844)],
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 40),
-                    Container(
-                      key: _aboutKey,
-                      width: double.infinity,
-                      child: const AboutSection(),
-                    ),
-                    const SizedBox(height: 30),
-                    Container(
-                      key: _skillsKey,
-                      width: double.infinity,
-                      child: const SkillsSection(),
-                    ),
-                    const SizedBox(height: 30),
-                    Container(
-                      key: _projectsKey,
-                      width: double.infinity,
-                      child: ProjectsSection(),
-                    ),
-                    const SizedBox(height: 30),
-                    Container(
-                      key: _contactKey,
-                      width: double.infinity,
-                      child: const ContactSection(),
-                    ),
-                    const SizedBox(height: 80),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 80),
+                ],
               ),
             ),
           ),
@@ -402,33 +494,32 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   }
 
   Widget _buildProfileRing(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryAccent = Theme.of(context).primaryColor;
+    final secondaryAccent = Theme.of(context).colorScheme.secondary;
+
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Outer glow ring
+        // Premium subtle border ring
         Container(
-          width: 180,
-          height: 180,
-          decoration: const BoxDecoration(
+          width: 176,
+          height: 176,
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: SweepGradient(
-              colors: [
-                Color(0xFFBB86FC),
-                Color(0xFF00FFCC),
-                Color(0xFFD400FF),
-                Color(0xFFBB86FC),
-              ],
+            gradient: LinearGradient(
+              colors: [primaryAccent, secondaryAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
-        // Inner gap
+        // Inner gap matching theme background
         Container(
-          width: 170,
-          height: 170,
+          width: 168,
+          height: 168,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isDark ? const Color(0xFF0F0C29) : const Color(0xFFE8EAF6),
+            color: Theme.of(context).scaffoldBackgroundColor,
           ),
         ),
         // Profile image
@@ -494,7 +585,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   Widget _infoRow(IconData icon, String text, bool isDark) {
     return Row(
       children: [
-        Icon(icon, color: const Color(0xFFBB86FC), size: 16),
+        Icon(icon, color: Theme.of(context).primaryColor, size: 16),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -511,7 +602,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
 }
 
 // --- Stat Pill ---
-class _StatPill extends StatelessWidget {
+class _StatPill extends StatefulWidget {
   final String label;
   final String sub;
   final IconData icon;
@@ -525,28 +616,62 @@ class _StatPill extends StatelessWidget {
   });
 
   @override
+  State<_StatPill> createState() => _StatPillState();
+}
+
+class _StatPillState extends State<_StatPill> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.4)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        transform: Matrix4.diagonal3Values(_isHovered ? 1.02 : 1.0, _isHovered ? 1.02 : 1.0, 1.0)
+          ..setTranslationRaw(0.0, _isHovered ? -4.0 : 0.0, 0.0),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: widget.color.withValues(alpha: _isHovered ? 0.18 : 0.12),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: widget.color.withValues(alpha: _isHovered ? 0.6 : 0.4),
+              width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: _isHovered
+                    ? widget.color.withValues(alpha: 0.15)
+                    : Colors.transparent,
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          Text(sub, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(widget.icon, color: widget.color, size: 20),
+              const SizedBox(height: 4),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  color: widget.color,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              Text(
+                widget.sub,
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -588,57 +713,95 @@ class _SectionNavButton extends StatelessWidget {
   }
 }
 
-// --- Gradient Social Button ---
-class _GradientSocialButton extends StatelessWidget {
+// --- Premium Social Button ---
+class _PremiumSocialButton extends StatefulWidget {
   final String text;
   final IconData icon;
-  final String url;
-  final List<Color> colors;
+  final String? url;
+  final VoidCallback? onTap;
+  final Color brandColor;
 
-  const _GradientSocialButton({
+  const _PremiumSocialButton({
     required this.text,
     required this.icon,
-    required this.url,
-    required this.colors,
+    this.url,
+    this.onTap,
+    required this.brandColor,
   });
 
   @override
+  State<_PremiumSocialButton> createState() => _PremiumSocialButtonState();
+}
+
+class _PremiumSocialButtonState extends State<_PremiumSocialButton> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(30),
-      onTap: () async {
-        final Uri uri = Uri.parse(url);
-        if (!await launchUrl(uri)) {
-          throw Exception('Could not launch $url');
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: colors),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        transform: Matrix4.translationValues(0.0, _isHovered ? -3.0 : 0.0, 0.0),
+        child: InkWell(
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: colors.last.withOpacity(0.4),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 17, color: Colors.white),
-            const SizedBox(width: 8),
-            Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
+          onTap: () async {
+            if (widget.onTap != null) {
+              widget.onTap!();
+            } else if (widget.url != null) {
+              final Uri uri = Uri.parse(widget.url!);
+              if (!await launchUrl(uri)) {
+                throw Exception('Could not launch ${widget.url}');
+              }
+            }
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+            decoration: BoxDecoration(
+              color: _isHovered
+                  ? widget.brandColor.withValues(alpha: 0.08)
+                  : theme.cardColor,
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: _isHovered
+                    ? widget.brandColor
+                    : theme.dividerColor.withValues(alpha: 0.6),
+                width: 1.0,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: _isHovered
+                      ? widget.brandColor.withValues(alpha: 0.15)
+                      : (isDark ? Colors.black.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.03)),
+                  blurRadius: _isHovered ? 8 : 4,
+                  offset: _isHovered ? const Offset(0, 4) : const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(widget.icon, size: 17, color: widget.brandColor),
+                const SizedBox(width: 8),
+                Text(
+                  widget.text,
+                  style: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

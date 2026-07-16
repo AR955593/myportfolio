@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../providers/theme_provider.dart';
+import '../../services/resume_service.dart';
 import 'tabs/about_tab.dart';
 import 'tabs/contact_tab.dart';
 import 'tabs/home_tab.dart';
@@ -31,8 +32,8 @@ class _MainScreenState extends State<MainScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: isDark
-            ? Colors.black.withValues(alpha: 0.25)
-            : Colors.white.withValues(alpha: 0.75),
+            ? const Color(0xCC0F1115)
+            : const Color(0xCCF8F9FA),
         elevation: 0,
         titleSpacing: 16,
         toolbarHeight: 76,
@@ -89,6 +90,30 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Tooltip(
+                message: 'Download Resume',
+                child: TextButton.icon(
+                  onPressed: () async {
+                    await ResumeService.generateAndDownload();
+                  },
+                  icon: const Icon(Icons.description_rounded, size: 18),
+                  label: const Text('Resume'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Consumer<ThemeProvider>(
               builder: (context, themeProvider, child) {
                 return IconButton(
@@ -105,19 +130,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    const Color(0xFF0F0C29),
-                    const Color(0xFF302B63),
-                    const Color(0xFF24243E),
-                  ]
-                : [const Color(0xFFFDFBFB), const Color(0xFFEBEDEE)],
-          ),
-        ),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: IndexedStack(
           index: _pageIndex,
           children: [
@@ -150,7 +163,7 @@ class _MainScreenState extends State<MainScreen> {
       if (apkDownloadUrl != 'YOUR_APK_DOWNLOAD_LINK' && apkDownloadUrl.isNotEmpty) {
         uri = Uri.parse(apkDownloadUrl);
       } else {
-        uri = Uri.parse('${Uri.base.origin}/app-release.apk');
+        uri = Uri.base.resolve('app-release.apk');
       }
 
       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
@@ -221,3 +234,5 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+
+

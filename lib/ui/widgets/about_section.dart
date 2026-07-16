@@ -43,7 +43,7 @@ class AboutSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'CComputer Science and Data Science undergraduate with hands-on expertise in Full Stack Development, Machine Learning, and DSA. Skilled in building production-ready web and mobile applications using React.js, Flutter, Python, Node.js, and Flask. Experienced in developing AI-powered systems using TensorFlow and OpenCV for computer vision and image processing. .',
+            'Computer Science and Data Science undergraduate with hands-on expertise in Full Stack Development, Machine Learning, and DSA. Skilled in building production-ready web and mobile applications using React.js, Flutter, Python, Node.js, and Flask. Experienced in developing AI-powered systems using TensorFlow and OpenCV for computer vision and image processing. .',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.6),
           ),
           const SizedBox(height: 24),
